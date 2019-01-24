@@ -1,0 +1,92 @@
+# 環境
+environ:
+    # 使用するGPUのID．使わないならnullか[]
+    gpu: [0]
+    # マシンの名前と一致していなければ実行しない
+    machine: GIORNO
+
+trainer:
+    name: hogetrainer
+    params:
+        none: none
+
+# log
+logger:
+    cgan.endCGAN:
+        scale: iter
+        freq:   1000000
+    cgan.printer:
+        freq: 1
+    cgan.loss_item:
+        freq: 1
+    cgan.image:
+        freq: 15
+    cgan.model_and_optims:
+        freq: 25
+
+# データ系
+dataset:
+    name: PoseHMDataset
+    params:
+        images_dir_train: pose-gan/market-dataset/train
+        images_dir_test: pose-gan/market-dataset/test
+        pairs_file_train: pose-gan/market-pairs-train.csv
+        pairs_file_test: pose-gan/market-pairs-test.csv
+        annotations_file_train: pose-gan/market-annotation-train.csv
+        annotations_file_test: pose-gan/market-annotation-test.csv
+        tmp_pose_dir: market
+        cache_pose_rep: 1
+
+
+############# この上はdatabaseが関係ある系のやつ ####################################
+
+# データローダー
+loader:
+    name: poseloader2
+    params:
+        batch_size: 4
+        shuffle: True
+        num_workers: 6
+        pin_memory: True
+
+# モデル系
+model:
+    generator:
+        name: orgGen
+        params:
+            image_size: [128,64]
+    discriminator:
+        name: orgDisc
+        params:
+            image_size: [128,64]
+
+# ロス関数
+loss:
+    generator:
+        name: orgGenLoss
+        params:
+            gan_loss: 1
+            l1_loss: 0.01
+            tv_loss: 0
+            lstruct: 0
+    discriminator:
+        name: orgDiscLoss
+        params:
+            none: None
+
+# 使用する最適化手法
+optimizer:
+    generator:
+        name: adam
+        params:
+            lr: 0.0002
+            beta_1: 0.5
+            beta_2: 0.999
+            epsilon:  0.0000001
+    discriminator:
+        name: adam
+        params:
+            lr: 0.0002
+            beta_1: 0.5
+            beta_2: 0.999
+            epsilon:  0.0000001
