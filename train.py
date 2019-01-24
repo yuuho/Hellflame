@@ -1,4 +1,4 @@
-import os # socket用
+import os
 import sys
 import socket
 import filecmp
