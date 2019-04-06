@@ -40,7 +40,7 @@ class Hellfire:
             # クラスの名前に変換
             class_name = service_name.capitalize()+'Service'
             # クラスのモジュールをロード
-            class_module = getattr(import_module('services.'+class_name),class_name)
+            class_module = getattr(import_module('hellfire.services.'+class_name),class_name)
             # サービスを追加
             self.services[service_name] = class_module(subparsers)
 
