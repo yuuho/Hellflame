@@ -45,5 +45,6 @@ class Hellfire:
             self.services[service_name] = class_module(subparsers)
 
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
+def main():
     hellfire = Hellfire()
