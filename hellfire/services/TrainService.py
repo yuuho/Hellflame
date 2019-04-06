@@ -58,7 +58,7 @@ class TrainService(Service):
 
         path_names = ['prog','data','exp','tmp']
         env_names = [ 'ML'+name.upper() for name in path_names]
-        paths = {k:{'path':None,'src':None} in path_names}
+        paths = {k:{'path':None,'src':None} for k in path_names}
 
         # プログラムだけ初期設定はカレントディレクトリ
         paths['prog'] = {'paht':Path(os.getcwd()),'src':'current path'}
