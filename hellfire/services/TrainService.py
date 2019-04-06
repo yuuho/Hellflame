@@ -19,11 +19,9 @@ class TrainService(Service):
     def register_parser(self,parser):
         # 必須項目
         parser.add_argument('--config','-c',type=str,
-                            default=None,
                             required=True,
                             dest='config', help='config file path')
         parser.add_argument('--name','-n',type=str,
-                            default=None,
                             required=True,
                             dest='name', help='experiment name')
         # 環境変数からも読み込める
@@ -69,11 +67,11 @@ class TrainService(Service):
                 paths[pname] = {'path':Path(os.environ.get(ename)),'src':'environment variable'}
 
         # 設定ファイルの存在確認
-        paths.config = Path(args.config)
-        if not paths.config.exists():
-            raise Exception('there is not such a config file : '+paths.config)
+        config_path = Path(args.config)
+        if not config_path.exists():
+            raise Exception('there is not such a config file : '+config_path)
         else:
-            with open(str(paths.config),'r') as f:
+            with open(str(config_path),'r') as f:
                 config = yaml.load(f)
 
         # 設定ファイルからパスの読み込み
