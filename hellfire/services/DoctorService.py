@@ -21,7 +21,8 @@ class DoctorService(Service):
         envs = ['MLPROG','MLDATA','MLEXP','MLTMP']
         for env in envs:
             if os.environ.get(env) is not None:
-                print('environment variable ',env,' is ',os.environ.get(env))
+                print(' - environment variable ',env,' is ',os.environ.get(env))
             else:
-                print('environment variable ',env,' does not exist')
+                print(' - environment variable ',env,' does not exist')
+                print('    set the environment variable\n---\nexport '+env+'="/path/to/dir"\n---')
 

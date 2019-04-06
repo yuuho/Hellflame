@@ -12,3 +12,8 @@ pip install git+https://github.com/yuuho/Hellfire
 ```
 pip uninstall hellfire
 ```
+
+
+## コマンド
+- ``train``
+- ``doctor``
