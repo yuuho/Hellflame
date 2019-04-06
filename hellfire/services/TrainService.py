@@ -1,5 +1,5 @@
 
-from services.Service import Service
+from hellfire.services.Service import Service
 
 
 class TrainService(Service):

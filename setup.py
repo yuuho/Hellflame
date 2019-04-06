@@ -3,7 +3,6 @@ from setuptools import setup
 setup(
     name="hellfire",
     version="0.0.1",
-    package_dir={'hellfire': 'src'},
     packages=['hellfire','hellfire.services'],
     author="yuuho",
     author_email="y.horiuchi@suou.waseda.jp",
