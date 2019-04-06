@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="hellfire",
     version="0.0.1",
-    package_dir={'': 'hellfire'},
+    package_dir={'': 'src'},
     packages=[''],
     author="yuuho",
     author_email="y.horiuchi@suou.waseda.jp",
