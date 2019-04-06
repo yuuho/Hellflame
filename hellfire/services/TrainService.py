@@ -40,3 +40,7 @@ class TrainService(Service):
         # 読み込み
 
         print('here do train')
+
+    def validate_args(self,args):
+        """コマンドライン引数が正しいか確認"""
+        return args

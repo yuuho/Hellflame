@@ -4,7 +4,7 @@ from importlib import import_module
 
 class Hellfire:
 
-    service_names = ['train']
+    service_names = ['train','doctor']
 
     def __init__(self):
         print('===================================================================')
