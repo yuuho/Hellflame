@@ -4,9 +4,8 @@ GPUを燃やすための地獄の学習システム．
 
 
 ## インストール
-このディレクトリで以下のコマンドを実行するとhellfireというコマンドが実行できるようになる．
 ```
-pip install -e .
+pip install git+https://github.com/yuuho/Hellfire
 ```
 
 ## アンインストール
