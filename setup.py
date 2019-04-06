@@ -11,7 +11,7 @@ setup(
     description="Object-Oriented research tool for deep learning",
     entry_points={
         "console_scripts": [
-            "hellfire = hellfire:main"
+            "hellfire = hellfire.hellfire:main"
         ]
     }
 )
