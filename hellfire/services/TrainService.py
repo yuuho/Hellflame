@@ -51,9 +51,13 @@ class TrainService(Service):
 
 
     def get_paths(self,args):
-        """パスの設定"""
-        #paths = Namespace()
+        """パスの設定
+        
+        優先度
+            current path < environment variable < config file < command line input
+        """
 
+        # 初期化
         path_names = ['prog','data','exp','tmp']
         env_names = [ 'ML'+name.upper() for name in path_names]
         paths = {k:{'path':None,'src':None} for k in path_names}
@@ -72,7 +76,7 @@ class TrainService(Service):
             raise Exception('there is not such a config file : '+config_path)
         else:
             with open(str(config_path),'r') as f:
-                config = yaml.load(f)
+                config = yaml.load(f,Loader=yaml.FullLoader)
 
         # 設定ファイルからパスの読み込み
         if 'path' in config['environ']:
@@ -90,7 +94,7 @@ class TrainService(Service):
             if paths[pname]['path'] is None:
                 raise Exception('set path : '+pname+' ($'+ename+')')
             if not paths[pname]['path'].exists():
-                raise Exception('the path is not exist : '+paths[pname]['path']+' read from '+paths[pname]['src']+\
+                raise Exception('the path is not exist : '+str(paths[pname]['path'])+' read from '+paths[pname]['src']+\
                                 'set accurate path : '+pname+' ($'+ename+')')
 
         # Namespaceに格納
