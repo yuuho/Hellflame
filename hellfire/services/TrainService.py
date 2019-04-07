@@ -120,5 +120,8 @@ class TrainService(Service):
         result_paths.savedir = result_paths.exp / args.name
         result_paths.savedir.mkdir(parents=True,exist_ok=True)
 
+        # 設定ファイルのパスを格納
+        result_paths.config = config_path
+
         return result_paths
 
