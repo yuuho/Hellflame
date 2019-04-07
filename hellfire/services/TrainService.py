@@ -44,10 +44,22 @@ class TrainService(Service):
         # 設定ファイルの存在確認
         paths = self.get_paths(args) # paths : Namespace, all attr is Path
 
-        print(paths)
+        # 設定ファイルの読み込み
+        with open(str(paths.config),'r') as f:
+            config = yaml.load(f)
+        config['environ'].update({
+            'prog' : paths.prog,
+            'data' : paths.data,
+            'exp'  : paths.exp,
+            'tmp'  : paths.tmp,
+            'savedir' : paths.savedir
+        })
 
-        # 読み込み
-        print('here do train')
+        # Trainerの呼び出し
+        sys.path.append(str(config['environ']['prog']))
+        Trainer = getattr(import_module('trainers.'+config['trainer']['name']),'Trainer')
+        trainer = Trainer(config)
+        trainer.train()
 
 
     def get_paths(self,args):
@@ -91,15 +103,22 @@ class TrainService(Service):
 
         # 存在確認
         for pname, ename in zip(path_names,env_names):
+            # パスが設定されていないとき
             if paths[pname]['path'] is None:
                 raise Exception('set path : '+pname+' ($'+ename+')')
+            # 設定されたパスが存在しないとき
             if not paths[pname]['path'].exists():
-                raise Exception('the path is not exist : '+str(paths[pname]['path'])+' read from '+paths[pname]['src']+\
-                                'set accurate path : '+pname+' ($'+ename+')')
+                raise Exception('the path is not exist : '+str(paths[pname]['path'])+\
+                                '\n    read from '+paths[pname]['src']+\
+                                '\n    set accurate path : '+pname+' ($'+ename+')')
 
         # Namespaceに格納
         result_paths = Namespace()
         result_paths.__dict__.update({k:v['path'] for k,v in paths.items()})
+
+        # 実験結果保存用ディレクトリを作成
+        result_paths.savedir = result_paths.exp / args.name
+        result_paths.savedir.mkdir(parents=True,exist_ok=True)
 
         return result_paths
 
