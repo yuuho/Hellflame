@@ -48,7 +48,7 @@ class TrainService(Service):
 
         # 設定ファイルの読み込み
         with open(str(paths.config),'r') as f:
-            config = yaml.load(f)
+            config = yaml.load(f,Loader=yaml.FullLoader)
         config['environ'].update({
             'prog' : paths.prog,
             'data' : paths.data,
@@ -56,6 +56,8 @@ class TrainService(Service):
             'tmp'  : paths.tmp,
             'savedir' : paths.savedir
         })
+
+        ## continue確認する？
 
         # Trainerの呼び出し
         sys.path.append(str(config['environ']['prog']))
@@ -66,7 +68,7 @@ class TrainService(Service):
 
     def get_paths(self,args):
         """パスの設定
-        
+
         優先度
             current path < environment variable < config file < command line input
         """
@@ -77,7 +79,7 @@ class TrainService(Service):
         paths = {k:{'path':None,'src':None} for k in path_names}
 
         # プログラムだけ初期設定はカレントディレクトリ
-        paths['prog'] = {'paht':Path(os.getcwd()),'src':'current path'}
+        paths['prog'] = {'path':Path(os.getcwd()),'src':'current path'}
 
         # 環境変数の読み込み
         for pname, ename in zip(path_names,env_names):
@@ -126,4 +128,3 @@ class TrainService(Service):
         result_paths.config = config_path
 
         return result_paths
-
