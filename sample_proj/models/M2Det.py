@@ -46,19 +46,19 @@ class FeatureExtractor(nn.Module):
         definition = {
             'conv_3x3':     lambda *config: nn.Conv2d(
                             in_channels=config[0], out_channels=config[1],
-                            kernel_size=3, stride=1, padding=1)
+                            kernel_size=3, stride=1, padding=1),
             'conv_1x1':     lambda *config: nn.Conv2d(
                             in_channels=config[0], out_channels=config[1],
-                            kernel_size=1, stride=1, padding=0)
+                            kernel_size=1, stride=1, padding=0),
             'conv_dilation':lambda *config: nn.Conv2d(
                             in_channels=config[0], out_channels=config[1],
-                            kernel_size=3, stride=1, padding=6, dilation=6)
+                            kernel_size=3, stride=1, padding=6, dilation=6),
             'batch_norm':   lambda *config: nn.BatchNorm2d(
                             num_features=config[0],
-                            eps=1e-5, momentum=0.01, affine=True)
-            'relu':         lambda *config: nn.ReLU(inplace=True)
-            'upsample':     lambda *config: nn.Upsample(scale_factor=2, mode='nearest')
-            'maxpool_down': lambda *config: nn.MaxPool2d(kernel_size=2, stride=2)
+                            eps=1e-5, momentum=0.01, affine=True),
+            'relu':         lambda *config: nn.ReLU(inplace=True),
+            'upsample':     lambda *config: nn.Upsample(scale_factor=2, mode='nearest'),
+            'maxpool_down': lambda *config: nn.MaxPool2d(kernel_size=2, stride=2),
             'maxpool_flat': lambda *config: nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
         }
         return nn.Sequential(*[ definition[k](*cfg) for k,*cfg in self.structure[key]])

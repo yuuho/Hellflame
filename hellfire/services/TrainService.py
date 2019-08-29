@@ -89,7 +89,7 @@ class TrainService(Service):
         # 設定ファイルの存在確認
         config_path = Path(args.config)
         if not config_path.exists():
-            raise Exception('there is not such a config file : '+config_path)
+            raise Exception('there is not such a config file : '+str(config_path))
         else:
             with open(str(config_path),'r') as f:
                 config = yaml.load(f,Loader=yaml.FullLoader)
