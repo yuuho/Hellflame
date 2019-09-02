@@ -2,7 +2,8 @@ from setuptools import setup
 
 setup(
     name="hellfire",
-    version="0.0.3",
+    version="0.0.4",
+    install_requires=['pyyaml'],
     packages=['hellfire','hellfire.services'],
     author="yuuho",
     author_email="y.horiuchi@suou.waseda.jp",

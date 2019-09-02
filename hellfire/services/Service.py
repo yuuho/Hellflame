@@ -23,7 +23,7 @@ class Service:
         self.register_parser(subparser)
         subparser.set_defaults(handler=self.handler_function)
 
-        print(self.command_name+' is loaded')
+        #print(self.command_name+' is loaded')
 
 
     def register_parser(self,subparser):
