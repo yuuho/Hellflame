@@ -1,8 +1,10 @@
 from setuptools import setup
 
+from hellfire.hellfire import __version__
+
 setup(
     name="hellfire",
-    version="0.0.4",
+    version=__version__,
     install_requires=['pyyaml'],
     packages=['hellfire','hellfire.services'],
     author="yuuho",

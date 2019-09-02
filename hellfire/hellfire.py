@@ -2,13 +2,16 @@ import argparse
 from importlib import import_module
 
 
+__version__ = '0.0.5'
+
+
 class Hellfire:
 
     service_names = ['train','doctor']
 
     def __init__(self):
         print('===================================================================')
-        print('| Hellfire Start                                                  |')
+        print('| Hellfire Start  %s ( ver. %s )                            |'%(' '*(10-len(__version__)),__version__))
         print('===================================================================')
         
         # クラス変数の読み込み
