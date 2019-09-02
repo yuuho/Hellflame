@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="hellfire",
-    version="0.0.2",
+    version="0.0.3",
     packages=['hellfire','hellfire.services'],
     author="yuuho",
     author_email="y.horiuchi@suou.waseda.jp",
