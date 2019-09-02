@@ -4,6 +4,7 @@ import os
 from argparse import Namespace
 from pathlib import Path
 from importlib import import_module
+from datetime import datetime, timedelta
 
 import yaml
 
@@ -40,6 +41,9 @@ class TrainService(Service):
                             default=None,
                             dest='tmp', help='一時ファイル置き場')
 
+        # TODO) 最初から オプション
+        # TODO) すべて yes オプション
+
 
     # エントリーポイント
     def handler_function(self,args):
@@ -49,21 +53,34 @@ class TrainService(Service):
         # 設定ファイルの読み込み
         with open(str(paths.config),'r') as f:
             config = yaml.load(f,Loader=yaml.FullLoader)
+
+        # continue確認する
+        continue_flag = self.continue_check(paths.savedir)
+        
+        # 設定ファルの準備
         config['environ'].update({
             'prog' : paths.prog,
             'data' : paths.data,
             'exp'  : paths.exp,
             'tmp'  : paths.tmp,
-            'savedir' : paths.savedir
+            'savedir' : paths.savedir,
+            'config': paths.config,
+            'is_continue': continue_flag
         })
 
-        ## continue確認する？
+        # 設定ファイルの保存
+        timestamp = (datetime.now()+timedelta(milliseconds=1)).strftime('%Y%m%d_%H%M_%S.%f')[:-3]
+        with (paths.savedir/('hellfire_config_%s.yml'%(timestamp))).open('w') as f:
+            yaml.dump(config,f)
 
         # Trainerの呼び出し
         sys.path.append(str(config['environ']['prog']))
         Trainer = getattr(import_module('trainers.'+config['trainer']['name']),'Trainer')
         trainer = Trainer(config)
         trainer.train()
+
+        # 終了したことを明示
+        (paths.savedir/'hellfire_end_point').touch()
 
 
     def get_paths(self,args):
@@ -76,7 +93,7 @@ class TrainService(Service):
         # 初期化
         path_names = ['prog','data','exp','tmp']
         env_names = [ 'ML'+name.upper() for name in path_names]
-        paths = {k:{'path':None,'src':None} for k in path_names}
+        paths = {k:{'path':None,'src':None} for k in path_names} # パスと情報ソース
 
         # プログラムだけ初期設定はカレントディレクトリ
         paths['prog'] = {'path':Path(os.getcwd()),'src':'current path'}
@@ -112,9 +129,17 @@ class TrainService(Service):
                 raise Exception('set path : '+pname+' ($'+ename+')')
             # 設定されたパスが存在しないとき
             if not paths[pname]['path'].exists():
-                raise Exception('the path is not exist : '+str(paths[pname]['path'])+\
-                                '\n    read from '+paths[pname]['src']+\
-                                '\n    set accurate path : '+pname+' ($'+ename+')')
+                if pname in ['exp','tmp']: # 書き込み系ディレクトリはディレクトリを作っていいか聞く
+                    if input('Do you make the path (y/n)? >> ') == 'y':
+                        paths[pname]['path'].mkdir(parents=True)
+                    else:
+                        raise Exception('the path is not exist : '+str(paths[pname]['path'])+\
+                                    '\n    read from '+paths[pname]['src']+\
+                                    '\n    set accurate path : '+pname+' ($'+ename+')')
+                else:
+                    raise Exception('the path is not exist : '+str(paths[pname]['path'])+\
+                                    '\n    read from '+paths[pname]['src']+\
+                                    '\n    set accurate path : '+pname+' ($'+ename+')')
 
         # Namespaceに格納
         result_paths = Namespace()
@@ -128,3 +153,19 @@ class TrainService(Service):
         result_paths.config = config_path
 
         return result_paths
+
+
+    def continue_check(self,save_path):
+        start_file = save_path/'hellfire_start_point'
+        end_file = save_path/'hellfire_end_point'
+
+        # 既に終了しているとき
+        if end_file.exists():
+            # TODO) 最初からオプションを考慮する
+            raise Exception('this experiments has been ended.')
+
+        if start_file.exists():
+            return True
+        else:
+            start_file.touch()
+            return False
