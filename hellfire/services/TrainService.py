@@ -130,12 +130,13 @@ class TrainService(Service):
             # 設定されたパスが存在しないとき
             if not paths[pname]['path'].exists():
                 if pname in ['exp','tmp']: # 書き込み系ディレクトリはディレクトリを作っていいか聞く
-                    if input('Do you make the path (y/n)? >> ') == 'y':
+                    if input('the path is not exist : %s\n'
+                             '    read from %s\n'
+                             'Do you make the path (y/n)? >> '%(
+                                 str(paths[pname]['path']),paths[pname]['src'])) == 'y':
                         paths[pname]['path'].mkdir(parents=True)
                     else:
-                        raise Exception('the path is not exist : '+str(paths[pname]['path'])+\
-                                    '\n    read from '+paths[pname]['src']+\
-                                    '\n    set accurate path : '+pname+' ($'+ename+')')
+                        raise Exception('    set accurate path : %s ($%s)'%(pname,ename))
                 else:
                     raise Exception('the path is not exist : '+str(paths[pname]['path'])+\
                                     '\n    read from '+paths[pname]['src']+\
