@@ -75,7 +75,7 @@ class TrainService(Service):
 
         # Trainerの呼び出し
         sys.path.append(str(config['environ']['prog']))
-        Trainer = getattr(import_module('trainers.'+config['trainer']['name']),'Trainer')
+        Trainer = getattr(import_module('trainer.'+config['trainer']['name']),'Trainer')
         trainer = Trainer(config)
         trainer.train()
 
