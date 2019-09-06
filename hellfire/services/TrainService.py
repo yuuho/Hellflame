@@ -41,7 +41,9 @@ class TrainService(Service):
                             default=None,
                             dest='tmp', help='一時ファイル置き場')
 
-        # TODO) 最初から オプション
+        # 強制的に最初から
+        parser.add_argument('--force-clear', action='store_true',
+                            dest='clear', help='強制的に最初から')
         # TODO) すべて yes オプション
 
 
@@ -155,6 +157,8 @@ class TrainService(Service):
 
         # 実験結果保存用ディレクトリを作成
         result_paths.savedir = result_paths.exp / args.name
+        if args.clear: # 強制新規作成のときは
+            shutil.rmtree(result_paths.savedir,ignore_errors=True)
         result_paths.savedir.mkdir(parents=True,exist_ok=True)
 
         # 設定ファイルのパスを格納
