@@ -77,10 +77,12 @@ class TrainService(Service):
         sys.path.append(str(config['environ']['prog']))
         Trainer = getattr(import_module('trainer.'+config['trainer']['name']),'Trainer')
         trainer = Trainer(config)
-        trainer.train()
-
-        # 終了したことを明示
-        (paths.savedir/'hellfire_end_point').touch()
+        try:
+            trainer.train()
+            # 終了したことを明示
+            (paths.savedir/'hellfire_end_point').touch()
+        except KeyboardInterrupt:
+            print('::: catch Ctrl-C :::')
 
 
     def get_paths(self,args):
