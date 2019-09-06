@@ -84,9 +84,10 @@ class TrainService(Service):
             trainer.train()
             # 終了したことを明示
             (paths.savedir/'hellfire_end_point').touch()
+            print('>>> ======================== train end ======================== <<<')
         except KeyboardInterrupt:
             print('\n>>> ====================== catch Ctrl-C ======================= <<<')
-            print('::: <<< Exit: TrainService')
+        print('::: <<< Exit: TrainService')
 
 
     def get_paths(self,args):
