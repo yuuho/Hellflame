@@ -16,6 +16,11 @@ DeepLearningの実験を管理するためのシステムと，
 ```
 pip install git+https://github.com/yuuho/Hellfire
 ```
+or
+```
+git clone https://github.com/yuuho/Hellfire
+cd Hellfire; pip install -e .
+```
 
 ## アンインストール
 ```

@@ -1,6 +1,7 @@
 
 import sys
 import os
+import shutil
 from argparse import Namespace
 from pathlib import Path
 from importlib import import_module
@@ -13,7 +14,7 @@ from hellfire.services.Service import Service
 
 class TrainService(Service):
     command_name = 'train'
-    help_text = 'hogehoge'
+    help_text = '設定ファイルの内容を元に学習を行う'
 
     def __init__(self,subparsers):
         super().__init__(subparsers)
@@ -23,14 +24,14 @@ class TrainService(Service):
         # 必須項目
         parser.add_argument('--config','-c',type=str,
                             required=True,
-                            dest='config', help='config file path')
+                            dest='config', help='config file path, 設定ファイルへのパス')
         parser.add_argument('--name','-n',type=str,
                             required=True,
-                            dest='name', help='experiment name')
-        # 環境変数からも読み込める
+                            dest='name', help='experiment name, 実験名')
+        # コマンドライン引数からパスを指定する場合
         parser.add_argument('--programs','-p', type=str,
                             default=None,
-                            dest='prog', help='source code dir path')
+                            dest='prog', help='ソースコードのディレクトリ')
         parser.add_argument('--datasets','-d', type=str,
                             default=None,
                             dest='data', help='データセット置き場')
@@ -40,42 +41,59 @@ class TrainService(Service):
         parser.add_argument('--temporary','-t', type=str,
                             default=None,
                             dest='tmp', help='一時ファイル置き場')
-
-        # TODO) 最初から オプション
-        # TODO) すべて yes オプション
+        # 強制的に最初から
+        parser.add_argument('--force-clear', action='store_true',
+                            dest='clear', help='強制的に最初から')
+        # すべて yes オプション
+        parser.add_argument('--yes','-y', action='store_true',
+                            dest='yes', help='ディレクトリの作成などすべて自動でyesを入力')
 
 
     # エントリーポイント
     def handler_function(self,args):
         print('::: >>> Enter: TrainService')
-        # 設定ファイルの存在確認
-        paths = self.get_paths(args) # paths : Namespace, all attr is Path
 
-        # 設定ファイルの読み込み
-        with open(str(paths.config),'r') as f:
-            config = yaml.load(f,Loader=yaml.FullLoader)
+        # 設定ファイルの存在確認と読み込み
+        config_path = Path(args.config)
+        if not config_path.exists():
+            raise Exception('there is not such a config file : '+str(config_path))
+        else:
+            with config_path.open('r') as f:
+                config = yaml.load(f,Loader=yaml.FullLoader)
 
-        # continue確認する
-        continue_flag = self.continue_check(paths.savedir)
+        # パスの設定読み込み
+        paths = self.get_paths(args, config) # paths : Namespace, all attr is Path
+        # 実験保存ディレクトリの作成
+        paths['savedir'] = paths['exp'] / args.name
+        if args.clear: # 強制新規作成のときは
+            shutil.rmtree(paths['savedir'],ignore_errors=True)
+        paths['savedir'].mkdir(parents=True,exist_ok=True)
+
+        # 実験ディレクトリの中身を見てcontinue確認する
+        continue_flag = self.continue_check(paths['savedir'])
         
-        # 設定ファルの準備
-        config['environ'].update({
-            'prog' : paths.prog,
-            'data' : paths.data,
-            'exp'  : paths.exp,
-            'tmp'  : paths.tmp,
-            'savedir' : paths.savedir,
-            'config': paths.config,
-            'is_continue': continue_flag
-        })
+        # 設定ファルに読み込んだ内容を追加
+        config['env'] = {
+            'prog' : paths['prog'],         # プログラムのルートディレクトリ
+            'data' : paths['data'],         # データセットのルートディレクトリ
+            'tmp'  : paths['tmp'],          # 計算キャッシュやglobal_writerに使う
+            'savedir' : paths['savedir'],   # この実験の保存ディレクトリ
+            'is_continue': continue_flag,   # 続きからかどうか
+            'exp_name': args.name,          # 実験の名前
+            'log': {
+                'exp'  : paths['exp'],
+                'config': config_path,     # 設定ファイルのパス
+            }
+        }
 
         # 設定ファイルの保存
         timestamp = (datetime.now()+timedelta(milliseconds=1)).strftime('%Y%m%d_%H%M_%S.%f')[:-3]
-        with (paths.savedir/('hellfire_config_%s.yml'%(timestamp))).open('w') as f:
+        shutil.copy(config_path, paths['savedir']/('hellfire_raw_config_%s.yml'%(timestamp)) )    # 生のやつの保存
+        with (paths['savedir']/('hellfire_config_%s.yml'%(timestamp))).open('w') as f:             # 読み取り結果の保存
             yaml.dump(config,f)
 
         # Trainerの呼び出し
-        sys.path.append(str(config['environ']['prog']))
+        sys.path.append(str(config['env']['prog']))
         Trainer = getattr(import_module('trainer.'+config['trainer']['name']),'Trainer')
         print('>>> ================ environment construction ================= <<<')
         trainer = Trainer(config)
@@ -83,14 +101,14 @@ class TrainService(Service):
         try:
             trainer.train()
             # 終了したことを明示
-            (paths.savedir/'hellfire_end_point').touch()
+            (paths['savedir']/'hellfire_end_point').touch()
             print('>>> ======================== train end ======================== <<<')
         except KeyboardInterrupt:
             print('\n>>> ====================== catch Ctrl-C ======================= <<<')
         print('::: <<< Exit: TrainService')
 
 
-    def get_paths(self,args):
+    def get_paths(self,args,config):
         """パスの設定
 
         優先度
@@ -99,35 +117,24 @@ class TrainService(Service):
 
         # 初期化
         path_names = ['prog','data','exp','tmp']
-        env_names = [ 'ML'+name.upper() for name in path_names]
         paths = {k:{'path':None,'src':None} for k in path_names} # パスと情報ソース
 
         # プログラムだけ初期設定はカレントディレクトリ
         paths['prog'] = {'path':Path(os.getcwd()),'src':'current path'}
 
         # 環境変数の読み込み
-        for pname, ename in zip(path_names,env_names):
-            if os.environ.get(ename) is not None:
-                paths[pname] = {'path':Path(os.environ.get(ename)),'src':'environment variable'}
-
-        # 設定ファイルの存在確認
-        config_path = Path(args.config)
-        if not config_path.exists():
-            raise Exception('there is not such a config file : '+str(config_path))
-        else:
-            with open(str(config_path),'r') as f:
-                config = yaml.load(f,Loader=yaml.FullLoader)
+        env_names = [ 'ML'+name.upper() for name in path_names]
+        paths = { p:{'path':Path(os.environ.get(e)),'src':'environment variable'}
+                    if os.environ.get(e) is not None else paths[p] for p, e in zip(path_names,env_names) }
 
         # 設定ファイルからパスの読み込み
         if 'path' in config['environ']:
-            for pname, ename in zip(path_names,env_names):
-                if ename in config['environ']['path']:
-                    paths[pname] = {'path':Path(config['environ']['path'][ename]),'src':'config file'}
+            paths = { p:{'path':Path(config['environ']['path'][e]),'src':'config file'}
+                        if e in config['environ']['path'] else paths[p] for p, e in zip(path_names,env_names) }
 
         # コマンドライン引数からの読み込み
-        for pname in path_names:
-            if vars(args)[pname] is not None:
-                paths[pname] = {'path':Path(vars(args)[pname]),'src':'commandline args'}
+        paths = { p:{'path':Path(vars(args)[p]),'src':'commandline args'}
+                    if vars(args)[p] is not None else paths[p] for p, e in zip(path_names,env_names) }
 
         # 存在確認
         for pname, ename in zip(path_names,env_names):
@@ -137,7 +144,7 @@ class TrainService(Service):
             # 設定されたパスが存在しないとき
             if not paths[pname]['path'].exists():
                 if pname in ['exp','tmp']: # 書き込み系ディレクトリはディレクトリを作っていいか聞く
-                    if input('the path is not exist : %s\n'
+                    if args.yes or input('the path is not exist : %s\n'
                              '    read from %s\n'
                              'Do you make the path (y/n)? >> '%(
                                  str(paths[pname]['path']),paths[pname]['src'])) == 'y':
@@ -149,31 +156,25 @@ class TrainService(Service):
                                     '\n    read from '+paths[pname]['src']+\
                                     '\n    set accurate path : '+pname+' ($'+ename+')')
 
-        # Namespaceに格納
-        result_paths = Namespace()
-        result_paths.__dict__.update({k:v['path'] for k,v in paths.items()})
-
-        # 実験結果保存用ディレクトリを作成
-        result_paths.savedir = result_paths.exp / args.name
-        result_paths.savedir.mkdir(parents=True,exist_ok=True)
-
-        # 設定ファイルのパスを格納
-        result_paths.config = config_path
-
+        result_paths = {k:v['path'] for k,v in paths.items()}
         return result_paths
 
 
     def continue_check(self,save_path):
+        '''
+        実験が続きからかどうか見る
+        '''
         start_file = save_path/'hellfire_start_point'
         end_file = save_path/'hellfire_end_point'
 
         # 既に終了しているとき
         if end_file.exists():
-            # TODO) 最初からオプションを考慮する
             raise Exception('this experiments has been ended.')
 
+        # スタートファイルがあったら continue = True
         if start_file.exists():
             return True
+        # なかったら作る
         else:
             start_file.touch()
             return False
