@@ -18,12 +18,6 @@ pip install git+https://github.com/yuuho/Hellfire
 pip uninstall hellfire
 ```
 
-## Requirements/依存関係
-hellfireはconda環境に追加して入れることを前提としている．  
-以下のようにしてcondaパッケージをあらかじめ追加しておく．
-```
-conda install pyyaml
-```
 
 ## サブコマンド
 ``hellfire``の後に続けて使う
