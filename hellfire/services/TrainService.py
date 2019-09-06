@@ -47,6 +47,7 @@ class TrainService(Service):
 
     # エントリーポイント
     def handler_function(self,args):
+        print('::: >>> Enter: TrainService')
         # 設定ファイルの存在確認
         paths = self.get_paths(args) # paths : Namespace, all attr is Path
 
@@ -84,7 +85,8 @@ class TrainService(Service):
             # 終了したことを明示
             (paths.savedir/'hellfire_end_point').touch()
         except KeyboardInterrupt:
-            print('::: catch Ctrl-C :::')
+            print('\n>>> ====================== catch Ctrl-C ======================= <<<')
+            print('::: <<< Exit: TrainService')
 
 
     def get_paths(self,args):
