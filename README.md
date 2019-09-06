@@ -27,6 +27,11 @@ pip uninstall hellfire
 pip install git+https://github.com/yuuho/Hellfire -U
 ```
 
+## 特定のブランチのものをインストールする
+```
+pip install git+https://github.com/yuuho/Hellfire.git@work
+```
+
 ## サブコマンド
 ``hellfire``の後に続けて使う
 - ``train`` : 学習システムの起動
