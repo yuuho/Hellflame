@@ -2,7 +2,7 @@ import argparse
 from importlib import import_module
 
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 
 
 class Hellfire:
@@ -10,9 +10,9 @@ class Hellfire:
     service_names = ['train','doctor']
 
     def __init__(self):
-        print('===================================================================\n' \
-             '| Hellfire Start  %s ( ver. %s )                            |\n' \
-             '==================================================================='%(' '*(10-len(__version__)),__version__))
+        print('\033[33m===================================================================\n' \
+                      '| Hellfire Start  %s ( ver. %s )                            |\n' \
+                      '===================================================================\033[0m'%(' '*(10-len(__version__)),__version__))
 
         # クラス変数の読み込み
         self.service_names = Hellfire.service_names
@@ -29,9 +29,9 @@ class Hellfire:
         # 実行 or エラーヘルプ
         result = args.handler(args) if hasattr(args,'handler') else self.parser.print_help()
 
-        print('===================================================================\n' \
-              '| Hellfire End                                                    |\n' \
-              '===================================================================')
+        print('\033[33m===================================================================\n' \
+                      '| Hellfire End                                                    |\n' \
+                      '===================================================================\033[0m')
 
 
     # 存在するすべてのサービスへの案内を準備
