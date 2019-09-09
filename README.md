@@ -44,4 +44,4 @@ pip install git+https://github.com/yuuho/Hellfire.git@work
 
 
 ## ドキュメント
-[document](.doc/index.md)
+[document](./doc/index.md)
