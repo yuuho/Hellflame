@@ -70,10 +70,10 @@ class TrainService(Service):
         machine = os.uname()[1]
 
         # GPU設定の確認
-        cuda_string, device_ids = self.get_device_settings(args,config) # str, list of int
-        # cpu, []
-        # 0,1,2, [0,1,2]
-        # None, 'not counted' <- 数え上げるのはtorchの仕事． CUDA_VISIBLE_DEVICESの設定がされていないのですべて扱えるはず
+        cuda_string = self.get_device_settings(args,config) # str, list of int
+        # cpu
+        # 0,1,2
+        # None <- 数え上げるのはtorchの仕事． CUDA_VISIBLE_DEVICESの設定がされていないのですべて扱えるはず
 
         # パスの設定読み込み
         paths = self.get_paths(args, config) # paths : Namespace, all attr is Path
@@ -96,7 +96,6 @@ class TrainService(Service):
             'exp_name': args.name,          # 実験の名前
             'machine': machine,             # マシン名
             'cuda_string': cuda_string,     # CUDA_VISIBLE_DEVICESに設定された文字列
-            'device_ids': device_ids,       # 設定されているGPU
             'log': {
                 'exp'  : paths['exp'],
                 'config': config_path,     # 設定ファイルのパス
@@ -203,36 +202,28 @@ class TrainService(Service):
         ## CUDA_VISIBLE_DEVICES あり
         if os.environ.get('CUDA_VISIBLE_DEVICES') is not None:
             cuda_string = os.environ.get('CUDA_VISIBLE_DEVICES')
-            device_ids = [int(s) for s in cuda_string.split(',')]
-            return cuda_string, device_ids
+            return cuda_string
 
         # hellfire コマンドライン指定あり
         if args.gpu is not None:
             if args.gpu == 'cpu':
                 cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = 'cpu'
-                device_ids = []
             elif args.gpu == 'all':
                 cuda_string = None
-                device_ids = 'not counted'
             else:
                 cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-                device_ids = [int(s) for s in args.gpu.split(',')]
-            return cuda_string, device_ids
+            return cuda_string
 
         # 設定ファイルに指定があるとき
         if 'gpu' in config['environ']:
             if config['environ']['gpu'] == 'cpu':
                 cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = 'cpu'
-                device_ids = []
             elif config['environ']['gpu'] == 'all':
                 cuda_string = None
-                device_ids = 'not counted'
             else:
                 cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = \
                                         ''.join([str(i) for i in config['environ']['gpu']])
-                device_ids = config['environ']['gpu']
-            return cuda_string, device_ids
+            return cuda_string
 
         cuda_string = None
-        device_ids = 'not counted'
-        return cuda_string, device_ids
+        return cuda_string
