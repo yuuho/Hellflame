@@ -67,3 +67,21 @@ environ:
         MLDATA: piyo
         MLPROG: foo
 ```
+
+## configに付加される情報
+```
+config['env'] = {
+    'prog' : paths['prog'],        # プログラムのルートディレクトリ
+    'data' : paths['data'],        # データセットのルートディレクトリ
+    'tmp'  : paths['tmp'],         # 計算キャッシュやglobal_writerに使う
+    'savedir' : paths['savedir'],  # この実験の保存ディレクトリ
+    'is_continue': continue_flag,   # 続きからかどうか
+    'exp_name': args.name,          # 実験の名前
+    'machine': 'piyo',              # マシンの名前
+    'gpu':  [0,1,2],                # GPU
+    'log': {
+        'exp'  : paths['exp'],
+        'config': config_path,     # 設定ファイルのパス
+    }
+}
+```
