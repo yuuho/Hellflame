@@ -3,7 +3,7 @@
 DeepLearningの実験を管理するためのシステムと，
 その操作のためのコマンドラインスクリプト．
 
-*特徴*
+## 特徴
 - 実験結果，プログラム，データセットの場所を設定ファイルで管理する．
     - それぞれのサーバーで設定ファイルを準備しておくことで同じ様に実験することが可能．
 - 実験設定も設定ファイルで管理する．
@@ -22,17 +22,17 @@ git clone https://github.com/yuuho/Hellfire
 cd Hellfire; pip install -e .
 ```
 
-## アンインストール
+### アンインストール
 ```
 pip uninstall hellfire
 ```
 
-## アップグレード
+### アップグレード
 ```
 pip install git+https://github.com/yuuho/Hellfire -U
 ```
 
-## 特定のブランチのものをインストールする
+### 特定のブランチのものをインストールする
 ```
 pip install git+https://github.com/yuuho/Hellfire.git@work
 ```
@@ -41,7 +41,7 @@ pip install git+https://github.com/yuuho/Hellfire.git@work
 ``hellfire``の後に続けて使う
 - ``train`` : 学習システムの起動
 - ``doctor`` : hellfire環境のチェック
-
+- ``list`` : 実験のリストアップ
 
 ## ドキュメント
 [document](./doc/index.md)
