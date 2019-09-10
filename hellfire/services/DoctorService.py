@@ -17,12 +17,18 @@ class DoctorService(Service):
 
     # エントリーポイント
     def handler_function(self,args):
-        print('=== Hellfire doctor ===')
+        print('::: >>> Enter: DoctorService')
         envs = ['MLPROG','MLDATA','MLEXP','MLTMP']
+        print('>>> ======================= doctor start ====================== <<<')
+        err_log = '\n'
         for env in envs:
             if os.environ.get(env) is not None:
-                print(' - environment variable ',env,' is ',os.environ.get(env))
+                print(' o | environment variable ',env,' is ',os.environ.get(env))
             else:
-                print(' - environment variable ',env,' does not exist')
-                print('    set the environment variable\n---\nexport '+env+'="/path/to/dir"\n---')
+                print(' x | environment variable ',env,' does not exist')
+                err_log +=  '--- set the environment variable ---\n' \
+                            'export %s="/path/to/dir"\n'%(env)
+        print(err_log)
+        print('>>> ======================= doctor end ======================== <<<')
+        print('::: <<< Exit: DoctorService')
 
