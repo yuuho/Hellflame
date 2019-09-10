@@ -47,7 +47,10 @@ class TrainService(Service):
         # すべて yes オプション
         parser.add_argument('--yes','-y', action='store_true',
                             dest='yes', help='ディレクトリの作成などすべて自動でyesを入力')
-
+        # GPU指定オプション
+        parser.add_argument('--gpu','-g', type=str,
+                            default=None,
+                            dest='gpu', help='GPUを指定する場合')
 
     # エントリーポイント
     def handler_function(self,args):
@@ -61,6 +64,17 @@ class TrainService(Service):
             with config_path.open('r') as f:
                 config = yaml.load(f,Loader=yaml.FullLoader)
 
+        # マシンの確認
+        if 'machine' in config['environ'] and config['environ']['machine']!=os.uname()[1]:
+            raise Exception('    setting name is not this machine : %s'%(config['environ']['machine']))
+        machine = os.uname()[1]
+
+        # GPU設定の確認
+        cuda_string = self.get_device_settings(args,config) # str, list of int
+        # cpu
+        # 0,1,2
+        # None <- 数え上げるのはtorchの仕事． CUDA_VISIBLE_DEVICESの設定がされていないのですべて扱えるはず
+
         # パスの設定読み込み
         paths = self.get_paths(args, config) # paths : Namespace, all attr is Path
         # 実験保存ディレクトリの作成
@@ -71,7 +85,7 @@ class TrainService(Service):
 
         # 実験ディレクトリの中身を見てcontinue確認する
         continue_flag = self.continue_check(paths['savedir'])
-        
+
         # 設定ファルに読み込んだ内容を追加
         config['env'] = {
             'prog' : paths['prog'],         # プログラムのルートディレクトリ
@@ -80,6 +94,8 @@ class TrainService(Service):
             'savedir' : paths['savedir'],   # この実験の保存ディレクトリ
             'is_continue': continue_flag,   # 続きからかどうか
             'exp_name': args.name,          # 実験の名前
+            'machine': machine,             # マシン名
+            'cuda_string': cuda_string,     # CUDA_VISIBLE_DEVICESに設定された文字列
             'log': {
                 'exp'  : paths['exp'],
                 'config': config_path,     # 設定ファイルのパス
@@ -178,3 +194,36 @@ class TrainService(Service):
         else:
             start_file.touch()
             return False
+
+
+    def get_device_settings(self,args,config):
+        # GPU 優先度 CUDA_VISIBLE_DEVICES > argparse > config
+
+        ## CUDA_VISIBLE_DEVICES あり
+        if os.environ.get('CUDA_VISIBLE_DEVICES') is not None:
+            cuda_string = os.environ.get('CUDA_VISIBLE_DEVICES')
+            return cuda_string
+
+        # hellfire コマンドライン指定あり
+        if args.gpu is not None:
+            if args.gpu == 'cpu':
+                cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = 'cpu'
+            elif args.gpu == 'all':
+                cuda_string = None
+            else:
+                cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+            return cuda_string
+
+        # 設定ファイルに指定があるとき
+        if 'gpu' in config['environ']:
+            if config['environ']['gpu'] == 'cpu':
+                cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = 'cpu'
+            elif config['environ']['gpu'] == 'all':
+                cuda_string = None
+            else:
+                cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = \
+                                        ''.join([str(i) for i in config['environ']['gpu']])
+            return cuda_string
+
+        cuda_string = None
+        return cuda_string
