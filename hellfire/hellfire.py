@@ -2,7 +2,7 @@ import argparse
 from importlib import import_module
 
 
-__version__ = '0.2.6'
+__version__ = '0.2.7'
 
 
 class Hellfire:
@@ -32,6 +32,7 @@ class Hellfire:
         print('\033[33m===================================================================\n' \
                       '| Hellfire End                                                    |\n' \
                       '===================================================================\033[0m')
+        exit()
 
 
     # 存在するすべてのサービスへの案内を準備

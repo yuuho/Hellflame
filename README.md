@@ -42,6 +42,10 @@ pip install git+https://github.com/yuuho/Hellfire.git@work
 - ``train`` : 学習システムの起動
 - ``doctor`` : hellfire環境のチェック
 - ``list`` : 実験のリストアップ
+- ``pull`` : サーバー上の実験結果の収集
+
+- ``dlist`` : データセットのリスト
+- ``dpush`` : データセットの送信
 
 ## ドキュメント
 [document](./doc/index.md)

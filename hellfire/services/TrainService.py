@@ -119,8 +119,10 @@ class TrainService(Service):
             # 終了したことを明示
             (paths['savedir']/'hellfire_end_point').touch()
             print('>>> ======================== train end ======================== <<<')
+            del trainer
         except KeyboardInterrupt:
             print('\n>>> ====================== catch Ctrl-C ======================= <<<')
+            del trainer
         print('::: <<< Exit: TrainService')
 
 
