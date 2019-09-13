@@ -6,7 +6,7 @@ setup(
     name="hellfire",
     version=__version__,
     install_requires=['pyyaml'],
-    packages=['hellfire','hellfire.services'],
+    packages=['hellfire','hellfire.services','hellfire.snippets'],
     author="yuuho",
     author_email="y.horiuchi@suou.waseda.jp",
     url="https://github.com/yuuho/Hellfire",

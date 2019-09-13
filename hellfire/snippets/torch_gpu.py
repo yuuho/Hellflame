@@ -21,3 +21,22 @@ def _set_device(self):
     else:
         self.device = torch.device('cuda:'+','.join([str(i) for i in range(torch.cuda.device_count())]))
         torch.backends.cudnn.benchmark = True
+
+
+'''
+Trainerクラスに書いている
+```
+class Trainer:
+    def _set_device(self):
+        hogehoge
+```
+を
+
+``from hellfire.snippets.torch_gpu import _set_device``
+した上で
+```
+class Trainer:
+    _set_device = _set_device
+```
+という感じにクラスプロパティ的に挿入するだけで良い．
+'''
