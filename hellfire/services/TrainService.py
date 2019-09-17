@@ -201,6 +201,9 @@ class TrainService(Service):
     def get_device_settings(self,args,config):
         # GPU 優先度 CUDA_VISIBLE_DEVICES > argparse > config
 
+        # pci順で考える
+        os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
+
         ## CUDA_VISIBLE_DEVICES あり
         if os.environ.get('CUDA_VISIBLE_DEVICES') is not None:
             cuda_string = os.environ.get('CUDA_VISIBLE_DEVICES')
