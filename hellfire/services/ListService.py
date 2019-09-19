@@ -6,27 +6,31 @@ import re
 from hellfire.services.Service import Service
 
 
+# 全体で実験結果の個数をカウントするためのオブジェクト
 class Counter:
     def __init__(self):
         self.count = 0
-    
+
     def getc(self):
         return self.count
 
     def increment(self):
         self.count += 1
 
+# ベースとなるツリー
 class Tree:
-    def __init__(self,nodes,counter):
+    def __init__(self,nodes,counter,trace,size_check):
         self.counter = counter
         self.title = nodes[0]
         self.children = []
+        self.size_check = size_check
+        self.trace = trace / self.title
 
         if nodes[1]=='hellfire_start_point':
             self.nodetype = 'end'
         else:
             self.nodetype = 'inner'
-            self.children.append(Tree(nodes[1:],self.counter))
+            self.children.append(Tree(nodes[1:],self.counter,self.trace,size_check=self.size_check))
 
     def add(self,nodes):
         exist_flag = False
@@ -36,9 +40,9 @@ class Tree:
                 child.add(nodes[1:])
                 exist_flag = True
                 break
-        
+
         if not exist_flag:
-            self.children.append(Tree(nodes,self.counter))
+            self.children.append(Tree(nodes,self.counter,self.trace,size_check=self.size_check))
 
     def render(self,indent):
         if self.nodetype == 'inner':
@@ -48,15 +52,31 @@ class Tree:
             self.counter.increment()
 
         end = '/' if self.nodetype == 'inner' else ' @'
+        # サイズ情報が必要なとき
+        if self.nodetype!='inner' and self.size_check:
+            all_file = [item for item in list(self.trace.rglob('*'))
+                            if re.search(r'.*',str(item)) and item.is_file()]
+            total = 0
+            for f in all_file:
+                total += os.path.getsize(str(f))
+            if total>(10**9):
+                end += ' %.1lf GB'%(total/(10**9))
+            elif total>(10**6):
+                end += ' %.1lf MB'%(total/(10**6))
+            else:
+                end += ' %.1lf kb'%(total/(10**3))
         print('%s : %s%s%s'%(num,indent*'   ',self.title,end))
         for c in self.children:
             c.render(indent+1)
 
 
+# 一番上だけ別の動作
 class RootTree(Tree):
-    def __init__(self,root,leaves):
+    def __init__(self,root,leaves,size_check):
         self.title = root.name
         self.counter = Counter()
+        self.size_check = size_check
+        self.trace = root # 絶対パス
 
         start = len(root.parts)
         leaves = sorted(leaves,key=lambda x:str(x))
@@ -85,7 +105,8 @@ class ListService(Service):
 
     # subparserの登録
     def register_parser(self,parser):
-        pass
+        parser.add_argument('--size','-s', action='store_true',
+                            dest='size_check', help='ファイルサイズも測定する')
 
     # エントリーポイント
     def handler_function(self,args):
@@ -94,10 +115,11 @@ class ListService(Service):
         exp_path = Path(os.environ.get('MLEXP')).resolve()
         print('MLEXP : ',exp_path)
 
+        # 実験スタートファイルのみ
         exps = [item for item in sorted(exp_path.rglob('*'))
                 if re.search(r'\/hellfire_start_point$',str(item)) and item.is_file()]
         print('>>> ======================= list start ======================== <<<')
-        tree = RootTree(exp_path,exps)
+        tree = RootTree(exp_path,exps,size_check=args.size_check)
         tree.render()
         print('>>> ======================= list end ========================== <<<')
 
