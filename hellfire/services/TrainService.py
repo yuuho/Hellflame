@@ -22,13 +22,11 @@ class TrainService(Service):
     # subparserの登録
     def register_parser(self,parser):
         # 必須項目
-        parser.add_argument('--config','-c',type=str,
-                            required=True,
-                            dest='config', help='config file path, 設定ファイルへのパス')
-        parser.add_argument('--name','-n',type=str,
-                            required=True,
-                            dest='name', help='experiment name, 実験名')
+        parser.add_argument('config',type=str,
+                            help='config file path, 設定ファイルへのパス')
         # コマンドライン引数からパスを指定する場合
+        parser.add_argument('--name','-n',type=str,
+                            dest='name', help='experiment name, 実験名')
         parser.add_argument('--programs','-p', type=str,
                             default=None,
                             dest='prog', help='ソースコードのディレクトリ')
@@ -65,7 +63,7 @@ class TrainService(Service):
                 config = yaml.load(f,Loader=yaml.FullLoader)
 
         # マシンの確認
-        if 'machine' in config['environ'] and config['environ']['machine']!=os.uname()[1]:
+        if 'machine' in config['environ'] and None!=config['environ']['machine']!=os.uname()[1]:
             raise Exception('    setting name is not this machine : %s'%(config['environ']['machine']))
         machine = os.uname()[1]
 
@@ -75,10 +73,15 @@ class TrainService(Service):
         # 0,1,2
         # None <- 数え上げるのはtorchの仕事． CUDA_VISIBLE_DEVICESの設定がされていないのですべて扱えるはず
 
+        # 実験名の取得
+        if ('exp_name' not in config['environ'] or config['environ']['exp_name']==None) and args.name==None:
+            raise Exception('    set experiment name : --name hoge/fuga/piyo')
+        exp_name = args.name if args.name!=None else config['environ']['exp_name']
+
         # パスの設定読み込み
         paths = self.get_paths(args, config) # paths : Namespace, all attr is Path
         # 実験保存ディレクトリの作成
-        paths['savedir'] = paths['exp'] / args.name
+        paths['savedir'] = paths['exp'] / exp_name
         if args.clear: # 強制新規作成のときは
             shutil.rmtree(paths['savedir'],ignore_errors=True)
         paths['savedir'].mkdir(parents=True,exist_ok=True)
@@ -93,7 +96,7 @@ class TrainService(Service):
             'tmp'  : paths['tmp'],          # 計算キャッシュやglobal_writerに使う
             'savedir' : paths['savedir'],   # この実験の保存ディレクトリ
             'is_continue': continue_flag,   # 続きからかどうか
-            'exp_name': args.name,          # 実験の名前
+            'exp_name': exp_name,          # 実験の名前
             'machine': machine,             # マシン名
             'cuda_string': cuda_string,     # CUDA_VISIBLE_DEVICESに設定された文字列
             'log': {
@@ -124,6 +127,7 @@ class TrainService(Service):
             print('\n\033[36m>>> ====================== catch Ctrl-C ======================= <<<\033[0m')
             del trainer
         print('\033[36m::: <<< Exit: TrainService\033[0m')
+        return 1
 
 
     def get_paths(self,args,config):

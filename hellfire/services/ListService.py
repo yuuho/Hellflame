@@ -124,3 +124,4 @@ class ListService(Service):
         print('\033[36m>>> ======================= list end ========================== <<<\033[0m')
 
         print('\033[36m::: <<< Exit: ListService\033[0m')
+        return 0

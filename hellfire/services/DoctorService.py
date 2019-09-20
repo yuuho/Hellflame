@@ -31,4 +31,5 @@ class DoctorService(Service):
         print(err_log)
         print('\033[36m>>> ======================= doctor end ======================== <<<\033[0m')
         print('\033[36m::: <<< Exit: DoctorService\033[0m')
+        return 0
 
