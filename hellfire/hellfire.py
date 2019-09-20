@@ -1,9 +1,8 @@
-import sys
 import argparse
 from importlib import import_module
 
 
-__version__ = '0.2.12'
+__version__ = '0.3.0'
 
 
 class Hellfire:
@@ -25,14 +24,19 @@ class Hellfire:
         # 全てのサービスを読み込み
         self.read_services()
 
+
+    def run(self):
         # コマンド入力の受け取り
         args = self.parser.parse_args()
         # 実行 or エラーヘルプ
         result = args.handler(args) if hasattr(args,'handler') else self.parser.print_help()
+        return result
 
+
+    def __del__(self):
         print('\033[33m===================================================================\n' \
-                      '| Hellfire End                                                    |\n' \
-                      '===================================================================\033[0m')
+                      '| Hellfire End    %s ( ver. %s )                            |\n' \
+                      '===================================================================\033[0m'%(' '*(10-len(__version__)),__version__))
  
 
     # 存在するすべてのサービスへの案内を準備
@@ -51,4 +55,10 @@ class Hellfire:
 
 def main():
     hellfire = Hellfire()
-    sys.exit(0)
+    result = hellfire.run()
+    del hellfire
+
+    if result>0:
+        import os
+        import signal
+        os.kill(os.getpid(), signal.SIGTERM)
