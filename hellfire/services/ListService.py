@@ -51,7 +51,8 @@ class Tree:
             num = '%3d'%(self.counter.getc())
             self.counter.increment()
 
-        end = '/' if self.nodetype == 'inner' else ' @'
+        is_end = '\033[32mDONE\033[0m' if (self.trace/'hellfire_end_point').exists() else '\033[31mWIP\033[0m'
+        end = '/' if self.nodetype == 'inner' else '    @[%s]'%(is_end)
         # サイズ情報が必要なとき
         if self.nodetype!='inner' and self.size_check:
             all_file = [item for item in list(self.trace.rglob('*'))
