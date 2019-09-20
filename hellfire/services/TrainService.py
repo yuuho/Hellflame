@@ -54,7 +54,7 @@ class TrainService(Service):
 
     # エントリーポイント
     def handler_function(self,args):
-        print('::: >>> Enter: TrainService')
+        print('\033[36m::: >>> Enter: TrainService\033[0m')
 
         # 設定ファイルの存在確認と読み込み
         config_path = Path(args.config)
@@ -111,19 +111,19 @@ class TrainService(Service):
         # Trainerの呼び出し
         sys.path.append(str(config['env']['prog']))
         Trainer = getattr(import_module('trainer.'+config['trainer']['name']),'Trainer')
-        print('>>> ================ environment construction ================= <<<')
+        print('\033[36m>>> ================ environment construction ================= <<<\033[0m')
         trainer = Trainer(config)
-        print('>>> ======================= train start ======================= <<<')
+        print('\033[36m>>> ======================= train start ======================= <<<\033[0m')
         try:
             trainer.train()
             # 終了したことを明示
             (paths['savedir']/'hellfire_end_point').touch()
-            print('>>> ======================== train end ======================== <<<')
+            print('\033[36m>>> ======================== train end ======================== <<<\033[0m')
             del trainer
         except KeyboardInterrupt:
-            print('\n>>> ====================== catch Ctrl-C ======================= <<<')
+            print('\n\033[36m>>> ====================== catch Ctrl-C ======================= <<<\033[0m')
             del trainer
-        print('::: <<< Exit: TrainService')
+        print('\033[36m::: <<< Exit: TrainService\033[0m')
 
 
     def get_paths(self,args,config):

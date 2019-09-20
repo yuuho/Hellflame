@@ -110,7 +110,7 @@ class ListService(Service):
 
     # エントリーポイント
     def handler_function(self,args):
-        print('::: >>> Enter: ListService')
+        print('\033[36m::: >>> Enter: ListService\033[0m')
 
         exp_path = Path(os.environ.get('MLEXP')).resolve()
         print('MLEXP : ',exp_path)
@@ -118,9 +118,9 @@ class ListService(Service):
         # 実験スタートファイルのみ
         exps = [item for item in sorted(exp_path.rglob('*'))
                 if re.search(r'\/hellfire_start_point$',str(item)) and item.is_file()]
-        print('>>> ======================= list start ======================== <<<')
+        print('\033[36m>>> ======================= list start ======================== <<<\033[0m')
         tree = RootTree(exp_path,exps,size_check=args.size_check)
         tree.render()
-        print('>>> ======================= list end ========================== <<<')
+        print('\033[36m>>> ======================= list end ========================== <<<\033[0m')
 
-        print('::: <<< Exit: ListService')
+        print('\033[36m::: <<< Exit: ListService\033[0m')

@@ -1,8 +1,9 @@
+import sys
 import argparse
 from importlib import import_module
 
 
-__version__ = '0.2.11'
+__version__ = '0.2.12'
 
 
 class Hellfire:
@@ -32,8 +33,7 @@ class Hellfire:
         print('\033[33m===================================================================\n' \
                       '| Hellfire End                                                    |\n' \
                       '===================================================================\033[0m')
-        exit()
-
+ 
 
     # 存在するすべてのサービスへの案内を準備
     def read_services(self):
@@ -49,6 +49,6 @@ class Hellfire:
             self.services[service_name] = class_module(subparsers)
 
 
-#if __name__ == '__main__':
 def main():
     hellfire = Hellfire()
+    sys.exit(0)

@@ -17,9 +17,9 @@ class DoctorService(Service):
 
     # エントリーポイント
     def handler_function(self,args):
-        print('::: >>> Enter: DoctorService')
+        print('\033[36m::: >>> Enter: DoctorService\033[0m')
         envs = ['MLPROG','MLDATA','MLEXP','MLTMP']
-        print('>>> ======================= doctor start ====================== <<<')
+        print('\033[36m>>> ======================= doctor start ====================== <<<\033[0m')
         err_log = '\n'
         for env in envs:
             if os.environ.get(env) is not None:
@@ -29,6 +29,6 @@ class DoctorService(Service):
                 err_log +=  '--- set the environment variable ---\n' \
                             'export %s="/path/to/dir"\n'%(env)
         print(err_log)
-        print('>>> ======================= doctor end ======================== <<<')
-        print('::: <<< Exit: DoctorService')
+        print('\033[36m>>> ======================= doctor end ======================== <<<\033[0m')
+        print('\033[36m::: <<< Exit: DoctorService\033[0m')
 
