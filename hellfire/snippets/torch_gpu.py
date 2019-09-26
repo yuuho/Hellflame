@@ -16,7 +16,7 @@ def _set_device(self):
         else:
             self.config['env']['cuda_string'] = 'cpu'
             self.device = torch.device('cpu')
-        os['environ']['CUDA_VISIBLE_DEVICES'] = self.config['env']['cuda_string']
+        os.environ['CUDA_VISIBLE_DEVICES'] = self.config['env']['cuda_string']
     ## 何か設定されていても実際にはtorchから見えるすべてのGPUを使用することとなる
     else:
         self.device = torch.device('cuda:'+','.join([str(i) for i in range(torch.cuda.device_count())]))

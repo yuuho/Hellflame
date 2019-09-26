@@ -2,7 +2,7 @@ import argparse
 from importlib import import_module
 
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 
 class Hellfire:
@@ -37,7 +37,7 @@ class Hellfire:
         print('\033[33m===================================================================\n' \
                       '| Hellfire End    %s ( ver. %s )                            |\n' \
                       '===================================================================\033[0m'%(' '*(10-len(__version__)),__version__))
- 
+
 
     # 存在するすべてのサービスへの案内を準備
     def read_services(self):
