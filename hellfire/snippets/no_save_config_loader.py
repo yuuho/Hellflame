@@ -5,7 +5,7 @@ from argparse import Namespace
 
 def _load_modules(self):
 
-    # プログラムを保存するディレクトリ
+    # 読み込んだモジュール
     self.modules = Namespace()
 
     # 読み込み対象
@@ -50,7 +50,7 @@ def _load_modules(self):
 '''
 # 概要
 設定ファイルどおりにファイルから読み込み，
-実行したファイルのコピーを実験結果ディレクトリに作る．
+実行したファイルのコピーを作らない．
 
 
 # 使い方
