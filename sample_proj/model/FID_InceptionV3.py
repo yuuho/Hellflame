@@ -168,14 +168,10 @@ class FID_InceptionV3(nn.Module):
         return seq(self.structure[key])
 
     def forward(self,x):
-        # input: (N,3,299,299)
-        print(x.shape)
+        # input: (N,3,299,299) RGB range[0,1]
         y1 = self.first(x)
-        print(y1.shape)
         y2 = self.second(y1)
-        print(y2.shape)
         y3 = self.third(y2)
-        print(y3.shape)
         y4 = self.fourth(y3)
         y4 = self.last1(y4)
         #result = self.last(y4)
