@@ -2,12 +2,12 @@ import argparse
 from importlib import import_module
 
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 
 
 class Hellfire:
 
-    service_names = ['train','doctor','list','publish']
+    service_names = ['train','doctor','list','publish','warming']
 
     def __init__(self):
         print('\033[33m===================================================================\n' \

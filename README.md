@@ -42,6 +42,8 @@ pip install git+https://github.com/yuuho/Hellfire.git@work
 - ``train`` : 学習システムの起動
 - ``doctor`` : hellfire環境のチェック
 - ``list`` : 実験のリストアップ
+- ``publish`` : 実験コードを公開用に整理
+- ``warming`` : 指定GPUを温める
 
 - ``pull`` : (TODO) サーバー上の実験結果の収集
 - ``dlist`` : (TODO) データセットのリスト
