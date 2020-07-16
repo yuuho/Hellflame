@@ -1,10 +1,9 @@
 
-import sys
 import os
 import shutil
 from argparse import Namespace
 from pathlib import Path
-from importlib import import_module
+from importlib.machinery import SourceFileLoader
 from datetime import datetime, timedelta
 
 import yaml
@@ -112,8 +111,9 @@ class TrainService(Service):
             yaml.dump(config,f)
 
         # Trainerの呼び出し
-        sys.path.append(str(config['env']['prog']))
-        Trainer = getattr(import_module('trainer.'+config['trainer']['name']),'Trainer')
+        Trainer = getattr(  SourceFileLoader( '_hellfire_trainer',
+                            str(config['env']['prog']/'trainer'/(config['trainer']['name']+'.py'))
+                    ).load_module(), 'Trainer')
         print('\033[36m>>> ================ environment construction ================= <<<\033[0m')
         trainer = Trainer(config)
         print('\033[36m>>> ======================= train start ======================= <<<\033[0m')
