@@ -2,7 +2,7 @@
 import os
 import time
 
-from hellfire.services.Service import Service
+from hellflame.services.Service import Service
 
 
 def warmup(index):

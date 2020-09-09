@@ -22,8 +22,8 @@ import zipfile
 
 import yaml
 
-from hellfire.services.Service import Service
-from hellfire.snippets.train_for_published import __file__ as train_file
+from hellflame.services.Service import Service
+from hellflame.snippets.train_for_published import __file__ as train_file
 
 
 class PublishService(Service):
@@ -55,7 +55,7 @@ class PublishService(Service):
 
         # 設定ファイルの存在確認と読み込み
         config_paths = [item for item in sorted((exp_path/args.exp_name).glob('*'))
-                if re.search(r'hellfire_config_.*\.yml$',str(item)) and item.is_file()]
+                if re.search(r'hell(fire|flame)_config_.*\.yml$',str(item)) and item.is_file()]
         if len(config_paths) == 0:
             raise Exception('there is no config file : '+str(exp_path/args.exp_name))
         with config_paths[-1].open('r') as f:
@@ -81,12 +81,12 @@ class PublishService(Service):
 
         # 設定ファイルの保存
         timestamp = (datetime.now()+timedelta(milliseconds=1)).strftime('%Y%m%d_%H%M_%S.%f')[:-3]
-        publish_file_path = savedir/('hellfire_publish_config_%s.yml'%(timestamp))
+        publish_file_path = savedir/('hellflame_publish_config_%s.yml'%(timestamp))
         with publish_file_path.open('w') as f:             # 読み取り結果の保存
             yaml.dump(config,f)
 
         # zipファイルにまとめる
-        zip_file_path = savedir/('hellfire_publish_%s.zip'%(timestamp))
+        zip_file_path = savedir/('hellflame_publish_%s.zip'%(timestamp))
         prefix = 'train/'
         with zipfile.ZipFile(str(zip_file_path), 'w') as new_zip:
             # 設定ファイル

@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 
-from hellfire.services.Service import Service
+from hellflame.services.Service import Service
 
 
 class DoctorService(Service):

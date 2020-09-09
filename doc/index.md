@@ -1,6 +1,6 @@
-# Hellfire
+# Hellflame
 
-hellfireはモジュール間の結合をメタ的に行うため，
+hellflameはモジュール間の結合をメタ的に行うため，
 PyTorch本来の持つクラスと違ったクラスのimportなどは必要にならない．
 
 モジュールの結合を設定ファイルで表す．
@@ -11,14 +11,14 @@ PyTorch本来の持つクラスと違ったクラスのimportなどは必要に�
 
 ## メモ
 ```
-- hellfire/ : hellfire本体
+- hellflame/ : hellflame本体
     - services/ : サブコマンドの実行ファイルが入っている
         - Service.py : サブコマンドクラスの親クラス
         - TrainService.py : 学習システム
         - DoctorService.py : 調査システム
     - snippets/ : 有用なメモのようなコードが入っている．コピーして使うこと前提だが面倒な時は参照して利用できる．
 - sample_config/ : サンプルプロジェクトの動作
-- sample_proj/ : hellfireプロジェクトの書き方の例．model zoo的な使い方もする．
+- sample_proj/ : hellflameプロジェクトの書き方の例．model zoo的な使い方もする．
 ```
 
 ## 実験時に保存すべきこと？
@@ -28,14 +28,14 @@ PyTorch本来の持つクラスと違ったクラスのimportなどは必要に�
 
 
 ## 設定ファイルの記述方法
-Hellfire TrainServiceが設定ファイルを読み込み，
+Hellflame TrainServiceが設定ファイルを読み込み，
 その指定通りに実験を行う．
 
 設定ファイルはyaml形式のテキストファイルである．
 yamlはjsonなどのように階層的にテキスト形式で情報を保存できるフォーマットであり，
 配列やハッシュ(辞書)などのデータ構造を用いることが出来る．
 
-Hellfire TrainServiceが設定ファイルに対して要求する記述はenvironというキーのハッシュと
+Hellflame TrainServiceが設定ファイルに対して要求する記述はenvironというキーのハッシュと
 trainerというキーのハッシュのみである．
 
 以下に最小構成のファイルを掲載する．

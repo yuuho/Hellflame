@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import re
 
-from hellfire.services.Service import Service
+from hellflame.services.Service import Service
 
 
 # 全体で実験結果の個数をカウントするためのオブジェクト
@@ -26,7 +26,7 @@ class Tree:
         self.size_check = size_check
         self.trace = trace / self.title
 
-        if nodes[1]=='hellfire_start_point':
+        if nodes[1] in ['hellfire_start_point','hellflame_start_point']:
             self.nodetype = 'end'
         else:
             self.nodetype = 'inner'
@@ -51,7 +51,8 @@ class Tree:
             num = '%3d'%(self.counter.getc())
             self.counter.increment()
 
-        is_end = '\033[32mDONE\033[0m' if (self.trace/'hellfire_end_point').exists() else '\033[31mWIP\033[0m'
+        is_end = '\033[32mDONE\033[0m' if (self.trace/'hellflame_end_point').exists() or \
+                   (self.trace/'hellfire_end_point').exists() else '\033[31mWIP\033[0m'
         end = '/' if self.nodetype == 'inner' else '    @[%s]'%(is_end)
         # サイズ情報が必要なとき
         if self.nodetype!='inner' and self.size_check:
@@ -118,7 +119,7 @@ class ListService(Service):
 
         # 実験スタートファイルのみ
         exps = [item for item in sorted(exp_path.rglob('*'))
-                if re.search(r'\/hellfire_start_point$',str(item)) and item.is_file()]
+                if re.search(r'\/hell(flame|fire)_start_point$',str(item)) and item.is_file()]
         print('\033[36m>>> ======================= list start ======================== <<<\033[0m')
         tree = RootTree(exp_path,exps,size_check=args.size_check)
         tree.render()

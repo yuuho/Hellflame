@@ -32,7 +32,7 @@ class Trainer:
 ```
 を
 
-``from hellfire.snippets.torch_gpu import _set_device``
+``from hellflame.snippets.torch_gpu import _set_device``
 した上で
 ```
 class Trainer:

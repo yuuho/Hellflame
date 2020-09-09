@@ -1,4 +1,4 @@
-# Hellfire
+# Hellflame
 
 DeepLearningの実験を管理するためのシステムと，
 その操作のためのコマンドラインスクリプト．
@@ -14,33 +14,33 @@ DeepLearningの実験を管理するためのシステムと，
 
 ## インストール
 ```
-pip install git+https://github.com/yuuho/Hellfire
+pip install git+https://github.com/yuuho/Hellflame
 ```
 or
 ```
-git clone https://github.com/yuuho/Hellfire
-cd Hellfire; pip install -e .
+git clone https://github.com/yuuho/Hellflame
+cd Hellflame; pip install -e .
 ```
 
 ### アンインストール
 ```
-pip uninstall hellfire
+pip uninstall hellflame
 ```
 
 ### アップグレード
 ```
-pip install git+https://github.com/yuuho/Hellfire -U
+pip install git+https://github.com/yuuho/Hellflame -U
 ```
 
 ### 特定のブランチのものをインストールする
 ```
-pip install git+https://github.com/yuuho/Hellfire.git@work
+pip install git+https://github.com/yuuho/Hellflame.git@work
 ```
 
 ## サブコマンド
-``hellfire``の後に続けて使う
+``hellflame``の後に続けて使う
 - ``train`` : 学習システムの起動
-- ``doctor`` : hellfire環境のチェック
+- ``doctor`` : hellflame環境のチェック
 - ``list`` : 実験のリストアップ
 - ``publish`` : 実験コードを公開用に整理
 - ``warming`` : 指定GPUを温める

@@ -2,23 +2,23 @@ import argparse
 from importlib import import_module
 
 
-__version__ = '0.3.5'
+__version__ = '0.4.0'
 
 
-class Hellfire:
+class Hellflame:
 
     service_names = ['train','doctor','list','publish','warming']
 
     def __init__(self):
         print('\033[33m===================================================================\n' \
-                      '| Hellfire Start  %s ( ver. %s )                            |\n' \
+                      '| Hellflame Start  %s ( ver. %s )                            |\n' \
                       '===================================================================\033[0m'%(' '*(10-len(__version__)),__version__))
 
         # クラス変数の読み込み
-        self.service_names = Hellfire.service_names
+        self.service_names = Hellflame.service_names
 
         # コマンド入力パーサーの作成
-        self.parser = argparse.ArgumentParser(description='Hellfire')
+        self.parser = argparse.ArgumentParser(description='Hellflame')
         # 各サービスの実体を保持する領域の作成
         self.services = {}
         # 全てのサービスを読み込み
@@ -35,7 +35,7 @@ class Hellfire:
 
     def __del__(self):
         print('\033[33m===================================================================\n' \
-                      '| Hellfire End    %s ( ver. %s )                            |\n' \
+                      '| Hellflame End    %s ( ver. %s )                            |\n' \
                       '===================================================================\033[0m'%(' '*(10-len(__version__)),__version__))
 
 
@@ -48,15 +48,15 @@ class Hellfire:
             # クラスの名前に変換
             class_name = service_name.capitalize()+'Service'
             # クラスのモジュールをロード
-            class_module = getattr(import_module('hellfire.services.'+class_name),class_name)
+            class_module = getattr(import_module('hellflame.services.'+class_name),class_name)
             # サービスを追加
             self.services[service_name] = class_module(subparsers)
 
 
 def main():
-    hellfire = Hellfire()
-    result = hellfire.run()
-    del hellfire
+    hellflame = Hellflame()
+    result = hellflame.run()
+    del hellflame
 
     if result>0:
         import os

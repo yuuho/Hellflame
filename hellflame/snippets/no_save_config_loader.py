@@ -62,7 +62,7 @@ class Trainer:
 ```
 を
 
-``from hellfire.snippets.config_loader import _load_modules``
+``from hellflame.snippets.config_loader import _load_modules``
 した上で
 ```
 class Trainer:

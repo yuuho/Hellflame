@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 import yaml
 
-from hellfire.services.Service import Service
+from hellflame.services.Service import Service
 
 
 class TrainService(Service):
@@ -106,12 +106,12 @@ class TrainService(Service):
 
         # 設定ファイルの保存
         timestamp = (datetime.now()+timedelta(milliseconds=1)).strftime('%Y%m%d_%H%M_%S.%f')[:-3]
-        shutil.copy(config_path, paths['savedir']/('hellfire_raw_config_%s.yml'%(timestamp)) )    # 生のやつの保存
-        with (paths['savedir']/('hellfire_config_%s.yml'%(timestamp))).open('w') as f:             # 読み取り結果の保存
+        shutil.copy(config_path, paths['savedir']/('hellflame_raw_config_%s.yml'%(timestamp)) )    # 生のやつの保存
+        with (paths['savedir']/('hellflame_config_%s.yml'%(timestamp))).open('w') as f:             # 読み取り結果の保存
             yaml.dump(config,f)
 
         # Trainerの呼び出し
-        Trainer = getattr(  SourceFileLoader( '_hellfire_trainer',
+        Trainer = getattr(  SourceFileLoader( '_hellflame_trainer',
                             str(config['env']['prog']/'trainer'/(config['trainer']['name']+'.py'))
                     ).load_module(), 'Trainer')
         print('\033[36m>>> ================ environment construction ================= <<<\033[0m')
@@ -120,7 +120,7 @@ class TrainService(Service):
         try:
             trainer.train()
             # 終了したことを明示
-            (paths['savedir']/'hellfire_end_point').touch()
+            (paths['savedir']/'hellflame_end_point').touch()
             print('\033[36m>>> ======================== train end ======================== <<<\033[0m')
             del trainer
         except KeyboardInterrupt:
@@ -186,8 +186,8 @@ class TrainService(Service):
         '''
         実験が続きからかどうか見る
         '''
-        start_file = save_path/'hellfire_start_point'
-        end_file = save_path/'hellfire_end_point'
+        start_file = save_path/'hellflame_start_point'
+        end_file = save_path/'hellflame_end_point'
 
         # 既に終了しているとき
         if end_file.exists():
@@ -213,7 +213,7 @@ class TrainService(Service):
             cuda_string = os.environ.get('CUDA_VISIBLE_DEVICES')
             return cuda_string
 
-        # hellfire コマンドライン指定あり
+        # hellflame コマンドライン指定あり
         if args.gpu is not None:
             if args.gpu == 'cpu':
                 cuda_string = os.environ['CUDA_VISIBLE_DEVICES'] = 'cpu'

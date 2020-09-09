@@ -1,19 +1,19 @@
 from setuptools import setup
 
-from hellfire.hellfire import __version__
+from hellflame.hellflame import __version__
 
 setup(
-    name="hellfire",
+    name="hellflame",
     version=__version__,
     install_requires=['pyyaml'],
-    packages=['hellfire','hellfire.services','hellfire.snippets'],
+    packages=['hellflame','hellflame.services','hellflame.snippets'],
     author="yuuho",
     author_email="y.horiuchi@suou.waseda.jp",
-    url="https://github.com/yuuho/Hellfire",
+    url="https://github.com/yuuho/Hellflame",
     description="Object-Oriented research tool for deep learning",
     entry_points={
         "console_scripts": [
-            "hellfire = hellfire.hellfire:main"
+            "hellflame = hellflame.hellflame:main"
         ]
     }
 )
