@@ -2,7 +2,7 @@ import argparse
 from importlib import import_module
 
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 
 class Hellflame:
@@ -11,7 +11,7 @@ class Hellflame:
 
     def __init__(self):
         print('\033[33m===================================================================\n' \
-                      '| Hellflame Start  %s ( ver. %s )                            |\n' \
+                      '| Hellflame Start  %s ( ver. %s )                           |\n' \
                       '===================================================================\033[0m'%(' '*(10-len(__version__)),__version__))
 
         # クラス変数の読み込み
@@ -35,7 +35,7 @@ class Hellflame:
 
     def __del__(self):
         print('\033[33m===================================================================\n' \
-                      '| Hellflame End    %s ( ver. %s )                            |\n' \
+                      '| Hellflame End    %s ( ver. %s )                           |\n' \
                       '===================================================================\033[0m'%(' '*(10-len(__version__)),__version__))
 
 
@@ -58,7 +58,7 @@ def main():
     result = hellflame.run()
     del hellflame
 
-    if result>0:
+    if result is not None and result>0:
         import os
         import signal
         os.kill(os.getpid(), signal.SIGTERM)
