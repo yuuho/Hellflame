@@ -2,7 +2,7 @@ import argparse
 from importlib import import_module
 
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 
 
 class Hellflame:
