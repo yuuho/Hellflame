@@ -165,6 +165,28 @@ class InceptionV3(nn.Module):
         return (y1,y2,y3,y4,aux)
 
 
+def calc_inception_score():
+
+    length = 500 # num images
+
+    data = np.zeros((length,1000),dtype=np.float32)
+
+    for i,im in enumerate(images):
+        # im is (1,C,299,299) Tensor [0.0,+1.0]
+        _1,_2,_3,pred,_4 = inceptionv3(im)
+        logits = F.softmax(pred,dim=1)
+        data[i] = logits[0].cpu().numpy()
+    
+    py = data.mean(axis=0)[None,:]
+    # assert py.shape==(1,1000)
+    dkl = (data*np.log(data/py)).sum(axis=1)
+    # assert dkl.shape==(length,)
+    inception_score      = np.exp(dkl.mean())
+
+    return inception_score
+
+
+
 
 if __name__ == '__main__':
 
@@ -203,6 +225,9 @@ if __name__ == '__main__':
 
     # 同じ入力を用意して比較する (torchvision版はバッチサイズ1では動作しない)
     s1 = torch.randn((4,3,299,299),dtype=torch.float32)
+    s1 = torch.abs(s1.min()) + s1
+    s1 = s1 / s1.max()
+    print(s1.min(),s1.max())
     d1 = s1.clone()
     s1 = s1.to(device)
     d1 = d1.to(device)
@@ -213,6 +238,8 @@ if __name__ == '__main__':
     print('    shape: dst:',D.shape,', src:',S.shape)
     v = D-S
     print('    element-wise sub-value: max:',v.max().item(),', min:',v.min().item())
+    print('    soft max or not:',S.sum(axis=1))
+    print('    soft max or not2:',F.softmax(S,dim=1).sum(axis=1))
     print('    transform inpu mode:',src_model.transform_input)
 
     print('>>> train mode output analysis >>>')
