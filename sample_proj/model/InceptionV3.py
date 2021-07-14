@@ -225,7 +225,7 @@ if __name__ == '__main__':
 
     # 同じ入力を用意して比較する (torchvision版はバッチサイズ1では動作しない)
     s1 = torch.randn((4,3,299,299),dtype=torch.float32)
-    s1 = torch.abs(s1.min()) + s1
+    s1 = s1 - s1.min()
     s1 = s1 / s1.max()
     print(s1.min(),s1.max())
     d1 = s1.clone()
